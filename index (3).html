@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Easy - Belajar Matematik Tadika</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#2563EB',
+                        brandYellow: '#F59E0B',
+                        brandGreen: '#10B981',
+                        brandOrange: '#F97316',
+                        brandPink: '#EC4899',
+                        brandPurple: '#8B5CF6',
+                        pastelBg: '#F0F9FF'
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background-color: #F0F9FF;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .bouncy {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bouncy:active {
+            transform: scale(0.92);
+        }
+
+        .float-anim {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
+        }
+
+        /* Hide scrollbars for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .disappear-anim {
+            animation: shrinkDisappear 0.5s forwards;
+        }
+        @keyframes shrinkDisappear {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-pastelBg text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-yellow-200">
+
+    <div id="app" class="max-w-md mx-auto w-full min-h-screen flex flex-col justify-between relative bg-gradient-to-b from-sky-100 via-sky-50 to-amber-50 shadow-2xl border-x border-sky-200 overflow-hidden pb-20">
+
+        <!-- HEADER SECTION -->
+        <header id="main-header" class="hidden sticky top-0 z-30 bg-white/90 backdrop-blur-md px-4 py-3 border-b-4 border-yellow-400 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-500 to-sky-400 text-white flex items-center justify-center font-bold text-xl shadow-md transform -rotate-6">
+                    123
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-blue-600 leading-none tracking-wide">Math Easy</h1>
+                    <span class="text-[10px] font-semibold text-amber-500 tracking-wider">TADIKA MALAYSIA</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Stars Counter Badge -->
+                <div class="bg-amber-100 border-2 border-amber-400 text-amber-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-inner">
+                    <i class="fa-solid fa-star text-amber-500 animate-spin" style="animation-duration: 8s;"></i>
+                    <span id="header-stars">0</span>
+                </div>
+
+                <!-- Language Switch Button -->
+                <button onclick="toggleLanguage()" class="bouncy bg-blue-100 border-2 border-blue-400 text-blue-700 font-bold px-2 py-1 rounded-xl text-xs flex items-center gap-1">
+                    <i class="fa-solid fa-globe"></i>
+                    <span id="current-lang-code">BM</span>
+                </button>
+
+                <!-- Profile Button -->
+                <button onclick="openProfileModal()" class="bouncy w-10 h-10 rounded-full bg-purple-100 border-2 border-purple-400 flex items-center justify-center text-xl shadow-sm">
+                    <span id="header-avatar">👦</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+        <main id="main-content" class="flex-1 p-4 overflow-y-auto no-scrollbar">
+            <!-- Dynamic pages will render here -->
+        </main>
+
+        <!-- PERSISTENT BOTTOM NAVIGATION -->
+        <nav id="bottom-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t-4 border-blue-400 px-2 py-2 flex justify-around items-center z-40 shadow-lg rounded-t-2xl">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-blue-600 p-1 rounded-xl bouncy">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5" data-i18n="nav_home">Utama</span>
+            </button>
+            <button onclick="switchTab('learn')" id="nav-learn" class="nav-btn flex flex-col items-center text-slate-400 p-1 rounded-xl bouncy">
+                <i class="fa-solid fa-book-open-reader text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5" data-i18n="nav_learn">Belajar</span>
+            </button>
+            <button onclick="switchTab('games')" id="nav-games" class="nav-btn flex flex-col items-center text-slate-400 p-1 rounded-xl bouncy">
+                <i class="fa-solid fa-gamepad text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5" data-i18n="nav_games">Game</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn flex flex-col items-center text-slate-400 p-1 rounded-xl bouncy">
+                <i class="fa-solid fa-award text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5" data-i18n="nav_quiz">Kuiz</span>
+            </button>
+            <button onclick="switchTab('progress')" id="nav-progress" class="nav-btn flex flex-col items-center text-slate-400 p-1 rounded-xl bouncy">
+                <i class="fa-solid fa-chart-line text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5" data-i18n="nav_progress">Kemajuan</span>
+            </button>
+            <button onclick="openParentModal()" id="nav-parent" class="nav-btn flex flex-col items-center text-slate-400 p-1 rounded-xl bouncy">
+                <i class="fa-solid fa-user-shield text-lg"></i>
+                <span class="text-[10px] font-bold mt-0.5" data-i18n="nav_parent">Ibu Bapa</span>
+            </button>
+        </nav>
+
+        <!-- MODALS CONTAINER -->
+        <div id="modal-container"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxwKhCcQaVYYm7nWUHseQEGUMFUHeDwII",
+            authDomain: "digital-website-math.firebaseapp.com",
+            databaseURL: "https://digital-website-math-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "digital-website-math",
+            storageBucket: "digital-website-math.firebasestorage.app",
+            messagingSenderId: "976734884130",
+            appId: "1:976734884130:web:330407fe9ef065ae4cd57b"
+        };
+
+        // Initialize Firebase
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.db = getDatabase(app);
+            window.firebaseRef = ref;
+            window.firebaseSet = set;
+            window.firebaseGet = get;
+            window.firebaseChild = child;
+            console.log("Firebase Realtime DB connected successfully.");
+        } catch (e) {
+            console.warn("Firebase initialization skipped or failed. LocalStorage active.", e);
+        }
+    </script>
+
+    <script>
+        // --- TRANSLATION DICTIONARY (BM / EN) ---
+        const i18n = {
+            ms: {
+                nav_home: "Utama",
+                nav_learn: "Belajar",
+                nav_games: "Game",
+                nav_quiz: "Kuiz",
+                nav_progress: "Kemajuan",
+                nav_parent: "Ibu Bapa",
+                greeting_hello: "Hai, Adik",
+                greeting_sub: "Jom belajar matematik dengan seronok!",
+                btn_start: "Mula Belajar! 🚀",
+                btn_listen: "Dengar 🔊",
+                btn_next: "Seterusnya ➔",
+                btn_prev: "⬅️ Sebelum",
+                btn_play_again: "Main Lagi 🔄",
+                btn_back: "Kembali 🏠",
+                btn_save: "Simpan 💾",
+                correct_msg: "Betul! Syabas! 🎉",
+                wrong_msg: "Cuba lagi, adik! 😊",
+                score_label: "Skor Kamu",
+                badge_earned: "Anugerah Baru!",
+                // Categories
+                cat_numbers: "Kenal Nombor",
+                desc_numbers: "Belajar nombor 1 hingga 20",
+                cat_counting: "Jom Mengira!",
+                desc_counting: "Kira buah dan mainan comel",
+                cat_addition: "Tambah",
+                desc_addition: "Campur objek & jawapan",
+                cat_subtraction: "Tolak",
+                desc_subtraction: "Buang objek & kira baki",
+                cat_shapes: "Kenal Bentuk",
+                desc_shapes: "Bulatan, Segi Tiga & Bintang",
+                cat_games: "Game Matematik",
+                desc_games: "5 Mini game menyeronokkan!",
+                cat_quiz: "Kuiz Bintang",
+                desc_quiz: "Uji kepintaran kamu!",
+                cat_rewards: "Piala & Bintang",
+                desc_rewards: "Lihat pencapaian kamu"
+            },
+            en: {
+                nav_home: "Home",
+                nav_learn: "Learn",
+                nav_games: "Games",
+                nav_quiz: "Quiz",
+                nav_progress: "Progress",
+                nav_parent: "Parents",
+                greeting_hello: "Hello, Friend",
+                greeting_sub: "Let's learn math with fun!",
+                btn_start: "Start Learning! 🚀",
+                btn_listen: "Listen 🔊",
+                btn_next: "Next ➔",
+                btn_prev: "⬅️ Back",
+                btn_play_again: "Play Again 🔄",
+                btn_back: "Go Back 🏠",
+                btn_save: "Save 💾",
+                correct_msg: "Correct! Awesome! 🎉",
+                wrong_msg: "Try again, friend! 😊",
+                score_label: "Your Score",
+                badge_earned: "New Badge Earned!",
+                // Categories
+                cat_numbers: "Learn Numbers",
+                desc_numbers: "Learn numbers 1 to 20",
+                cat_counting: "Let's Count!",
+                desc_counting: "Count cute items and fruits",
+                cat_addition: "Addition",
+                desc_addition: "Add objects and discover total",
+                cat_subtraction: "Subtraction",
+                desc_subtraction: "Remove objects & find balance",
+                cat_shapes: "Shapes Fun",
+                desc_shapes: "Circles, Triangles & Stars",
+                cat_games: "Math Games",
+                desc_games: "5 fun interactive games!",
+                cat_quiz: "Star Quiz",
+                desc_quiz: "Test your skills!",
+                cat_rewards: "Badges & Stars",
+                desc_rewards: "View your achievements"
+            }
+        };
+
+        // GLOBAL APP STATE
+        const state = {
+            lang: localStorage.getItem('math_easy_lang') || 'ms',
+            soundEnabled: true,
+            musicEnabled: true,
+            profile: JSON.parse(localStorage.getItem('math_easy_profile')) || {
+                name: 'Aiman',
+                age: 5,
+                avatar: '👦',
+                stars: 10,
+                completed: {
+                    numbers: 0,
+                    counting: 0,
+                    addition: 0,
+                    subtraction: 0,
+                    shapes: 0,
+                    games: 0,
+                    quiz: 0
+                },
+                badges: ['Number Explorer']
+            },
+            currentTab: 'splash',
+            activeNumber: 1,
+            quizState: null
+        };
+
+        // --- WEB AUDIO API SYNTHESIZER FOR SOUND EFFECTS ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                // Happy Arpeggio
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.2);
+                });
+            } else if (type === 'wrong') {
+                // Low gentle boop
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'click') {
+                // Gentle pop
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'star') {
+                // Sparkling chime
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.setValueAtTime(1760, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        // --- SPEECH SYNTHESIS API (TTS) FOR MALAY / ENGLISH ---
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop ongoing speech
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.85; // Slightly slower for kids
+            utterance.pitch = 1.2; // Cheerful friendly pitch
+
+            // Prefer Malay voice if available, fallback to Indonesian/English
+            const voices = window.speechSynthesis.getVoices();
+            if (state.lang === 'ms') {
+                const msVoice = voices.find(v => v.lang.includes('ms') || v.lang.includes('id'));
+                if (msVoice) utterance.voice = msVoice;
+            } else {
+                const enVoice = voices.find(v => v.lang.includes('en'));
+                if (enVoice) utterance.voice = enVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // SAVE PROFILE DATA TO LOCALSTORAGE & FIREBASE
+        function saveProfile() {
+            localStorage.setItem('math_easy_profile', JSON.stringify(state.profile));
+            document.getElementById('header-stars').innerText = state.profile.stars;
+            document.getElementById('header-avatar').innerText = state.profile.avatar;
+
+            // Sync to Firebase if available
+            if (window.db && window.firebaseRef && window.firebaseSet) {
+                try {
+                    const userRef = window.firebaseRef(window.db, 'users/' + state.profile.name.toLowerCase().replace(/\s+/g, '_'));
+                    window.firebaseSet(userRef, {
+                        ...state.profile,
+                        updatedAt: new Date().toISOString()
+                    });
+                } catch(e) {
+                    console.log("Firebase sync skipped:", e);
+                }
+            }
+        }
+
+        // LANGUAGE TOGGLE
+        function toggleLanguage() {
+            playSound('click');
+            state.lang = state.lang === 'ms' ? 'en' : 'ms';
+            localStorage.setItem('math_easy_lang', state.lang);
+            document.getElementById('current-lang-code').innerText = state.lang.toUpperCase();
+            renderCurrentPage();
+        }
+
+        function t(key) {
+            return i18n[state.lang][key] || key;
+        }
+
+        // --- NAVIGATION CONTROLLER ---
+        function switchTab(tabId) {
+            playSound('click');
+            state.currentTab = tabId;
+
+            // Show/Hide Header & Bottom Nav
+            const header = document.getElementById('main-header');
+            const nav = document.getElementById('bottom-nav');
+
+            if (tabId === 'splash' || tabId === 'language_select') {
+                header.classList.add('hidden');
+                nav.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+                nav.classList.remove('hidden');
+            }
+
+            // Update Nav Active State
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'bg-blue-50');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('text-blue-600', 'bg-blue-50');
+            }
+
+            renderCurrentPage();
+        }
+
+        function renderCurrentPage() {
+            const container = document.getElementById('main-content');
+            
+            switch (state.currentTab) {
+                case 'splash':
+                    container.innerHTML = renderSplashScreen();
+                    break;
+                case 'language_select':
+                    container.innerHTML = renderLanguageSelectScreen();
+                    break;
+                case 'home':
+                    container.innerHTML = renderHomeScreen();
+                    break;
+                case 'learn':
+                    container.innerHTML = renderLearnCategoriesScreen();
+                    break;
+                case 'learn_numbers':
+                    container.innerHTML = renderLearnNumbersScreen();
+                    break;
+                case 'learn_counting':
+                    container.innerHTML = renderLearnCountingScreen();
+                    break;
+                case 'learn_addition':
+                    container.innerHTML = renderLearnAdditionScreen();
+                    break;
+                case 'learn_subtraction':
+                    container.innerHTML = renderLearnSubtractionScreen();
+                    break;
+                case 'learn_shapes':
+                    container.innerHTML = renderLearnShapesScreen();
+                    break;
+                case 'games':
+                    container.innerHTML = renderGamesMenuScreen();
+                    break;
+                case 'game_catch':
+                    container.innerHTML = renderGameCatchScreen();
+                    initCatchGame();
+                    break;
+                case 'quiz':
+                    container.innerHTML = renderQuizScreen();
+                    break;
+                case 'progress':
+                    container.innerHTML = renderProgressScreen();
+                    break;
+                case 'rewards':
+                    container.innerHTML = renderRewardsScreen();
+                    break;
+                default:
+                    container.innerHTML = renderHomeScreen();
+            }
+        }
+
+        // --- 1. SPLASH SCREEN ---
+        function renderSplashScreen() {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen-bg');
+                if (splash) switchTab('language_select');
+            }, 3000);
+
+            return `
+                <div id="splash-screen-bg" class="flex flex-col items-center justify-center min-h-[80vh] text-center p-6">
+                    <!-- Smiling Mascot SVG -->
+                    <div class="relative w-40 h-40 mb-6 float-anim">
+                        <div class="w-40 h-40 bg-gradient-to-tr from-yellow-300 via-amber-400 to-orange-400 rounded-3xl shadow-xl border-4 border-white flex items-center justify-center transform rotate-3">
+                            <span class="text-7xl font-extrabold text-white drop-shadow-md">7</span>
+                        </div>
+                        <!-- Mascot Face Details -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <div class="flex gap-4 mb-2">
+                                <div class="w-4 h-6 bg-slate-900 rounded-full border-2 border-white"></div>
+                                <div class="w-4 h-6 bg-slate-900 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div class="w-8 h-4 border-b-4 border-slate-900 rounded-full"></div>
+                            <div class="absolute -bottom-1 -right-1 text-3xl">✨</div>
+                        </div>
+                    </div>
+
+                    <h1 class="text-4xl font-extrabold text-blue-600 tracking-wide mb-1 drop-shadow-sm">Math Easy</h1>
+                    <p class="text-lg font-bold text-amber-600 mb-8 bg-amber-100 px-4 py-1.5 rounded-full border border-amber-300">
+                        Belajar Matematik Dengan Seronok!
+                    </p>
+
+                    <!-- Simple Loading Indicator -->
+                    <div class="flex items-center gap-2 text-blue-500 font-bold bg-white px-5 py-2.5 rounded-2xl shadow-md border border-sky-100">
+                        <div class="w-4 h-4 rounded-full bg-blue-500 animate-ping"></div>
+                        <span>Memuatkan...</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 2. LANGUAGE SELECT SCREEN ---
+        function renderLanguageSelectScreen() {
+            return `
+                <div class="flex flex-col items-center justify-center min-h-[75vh] p-4 text-center">
+                    <div class="text-6xl mb-4 float-anim">🇲🇾 / 🇬🇧</div>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Pilih Bahasa / Select Language</h2>
+                    <p class="text-sm font-semibold text-slate-500 mb-8">Pilih bahasa pilihan untuk adik belajar!</p>
+
+                    <div class="w-full space-y-4 max-w-xs">
+                        <button onclick="selectLang('ms')" class="bouncy w-full bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white p-4 rounded-2xl shadow-lg border-b-4 border-blue-700 flex items-center justify-between text-left">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🇲🇾</span>
+                                <div>
+                                    <div class="font-bold text-lg">Bahasa Melayu</div>
+                                    <div class="text-xs text-sky-100">Utama untuk Tadika Malaysia</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-white/80"></i>
+                        </button>
+
+                        <button onclick="selectLang('en')" class="bouncy w-full bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-white p-4 rounded-2xl shadow-lg border-b-4 border-amber-600 flex items-center justify-between text-left">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🇬🇧</span>
+                                <div>
+                                    <div class="font-bold text-lg">English</div>
+                                    <div class="text-xs text-amber-100">Simple for Kindergarten</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-white/80"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectLang(lang) {
+            playSound('click');
+            state.lang = lang;
+            localStorage.setItem('math_easy_lang', lang);
+            document.getElementById('current-lang-code').innerText = lang.toUpperCase();
+            switchTab('home');
+        }
+
+        // --- 3. HOME DASHBOARD SCREEN ---
+        function renderHomeScreen() {
+            return `
+                <div class="space-y-5">
+                    <!-- Welcome Banner -->
+                    <div class="bg-gradient-to-r from-blue-500 via-sky-500 to-indigo-500 rounded-3xl p-5 text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-20 text-8xl">🔢</div>
+                        <div class="flex items-center justify-between relative z-10">
+                            <div>
+                                <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Tadika 4-6 Tahun</span>
+                                <h2 class="text-2xl font-extrabold mt-1">
+                                    ${state.lang === 'ms' ? 'Hai' : 'Hello'}, ${state.profile.name}! ${state.profile.avatar}
+                                </h2>
+                                <p class="text-xs text-sky-100 font-medium mt-0.5">${t('greeting_sub')}</p>
+                            </div>
+                            <button onclick="openProfileModal()" class="bouncy bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-2xl border border-white/30 text-white">
+                                <i class="fa-solid fa-gear text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid Cards -->
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <!-- Numbers Card -->
+                        <div onclick="switchTab('learn_numbers')" class="bouncy bg-white p-4 rounded-3xl border-2 border-sky-200 shadow-md flex flex-col items-center text-center cursor-pointer hover:border-blue-400">
+                            <div class="w-14 h-14 bg-sky-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                                🔢
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base leading-tight">${t('cat_numbers')}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${t('desc_numbers')}</p>
+                        </div>
+
+                        <!-- Counting Card -->
+                        <div onclick="switchTab('learn_counting')" class="bouncy bg-white p-4 rounded-3xl border-2 border-amber-200 shadow-md flex flex-col items-center text-center cursor-pointer hover:border-amber-400">
+                            <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                                🍎
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base leading-tight">${t('cat_counting')}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${t('desc_counting')}</p>
+                        </div>
+
+                        <!-- Addition Card -->
+                        <div onclick="switchTab('learn_addition')" class="bouncy bg-white p-4 rounded-3xl border-2 border-emerald-200 shadow-md flex flex-col items-center text-center cursor-pointer hover:border-emerald-400">
+                            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                                ➕
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base leading-tight">${t('cat_addition')}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${t('desc_addition')}</p>
+                        </div>
+
+                        <!-- Subtraction Card -->
+                        <div onclick="switchTab('learn_subtraction')" class="bouncy bg-white p-4 rounded-3xl border-2 border-rose-200 shadow-md flex flex-col items-center text-center cursor-pointer hover:border-rose-400">
+                            <div class="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                                ➖
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base leading-tight">${t('cat_subtraction')}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${t('desc_subtraction')}</p>
+                        </div>
+
+                        <!-- Shapes Card -->
+                        <div onclick="switchTab('learn_shapes')" class="bouncy bg-white p-4 rounded-3xl border-2 border-purple-200 shadow-md flex flex-col items-center text-center cursor-pointer hover:border-purple-400">
+                            <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                                🔺
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base leading-tight">${t('cat_shapes')}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${t('desc_shapes')}</p>
+                        </div>
+
+                        <!-- Games Menu Card -->
+                        <div onclick="switchTab('games')" class="bouncy bg-white p-4 rounded-3xl border-2 border-orange-200 shadow-md flex flex-col items-center text-center cursor-pointer hover:border-orange-400">
+                            <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                                🎮
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base leading-tight">${t('cat_games')}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${t('desc_games')}</p>
+                        </div>
+                    </div>
+
+                    <!-- Quiz & Rewards Quick Actions -->
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <button onclick="switchTab('quiz')" class="bouncy bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 p-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-md border-b-4 border-amber-600">
+                            <i class="fa-solid fa-star text-lg"></i>
+                            <span>${t('cat_quiz')}</span>
+                        </button>
+                        <button onclick="switchTab('rewards')" class="bouncy bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-md border-b-4 border-purple-700">
+                            <i class="fa-solid fa-trophy text-lg"></i>
+                            <span>${t('cat_rewards')}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 4. LEARNING MENU MODULE ---
+        function renderLearnCategoriesScreen() {
+            return `
+                <div class="space-y-4">
+                    <div class="text-center mb-4">
+                        <h2 class="text-2xl font-extrabold text-blue-600">${t('nav_learn')}</h2>
+                        <p class="text-xs text-slate-500 font-semibold">Pilih tajuk matematik yang adik nak belajar hari ini!</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div onclick="switchTab('learn_numbers')" class="bouncy bg-white p-4 rounded-2xl border-2 border-sky-300 shadow-md flex items-center gap-4 cursor-pointer">
+                            <div class="w-16 h-16 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-3xl font-extrabold shrink-0">123</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg text-slate-800">${t('cat_numbers')}</h3>
+                                <p class="text-xs text-slate-500">Kenal & sebut nombor 1 hingga 20</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-sky-400 text-xl"></i>
+                        </div>
+
+                        <div onclick="switchTab('learn_counting')" class="bouncy bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-md flex items-center gap-4 cursor-pointer">
+                            <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-3xl shrink-0">🍎</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg text-slate-800">${t('cat_counting')}</h3>
+                                <p class="text-xs text-slate-500">Kira epal, kereta & mainan comel</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-amber-400 text-xl"></i>
+                        </div>
+
+                        <div onclick="switchTab('learn_addition')" class="bouncy bg-white p-4 rounded-2xl border-2 border-emerald-300 shadow-md flex items-center gap-4 cursor-pointer">
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl font-bold shrink-0">➕</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg text-slate-800">${t('cat_addition')}</h3>
+                                <p class="text-xs text-slate-500">Operasi tambah mudah dengan gambar</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-emerald-400 text-xl"></i>
+                        </div>
+
+                        <div onclick="switchTab('learn_subtraction')" class="bouncy bg-white p-4 rounded-2xl border-2 border-rose-300 shadow-md flex items-center gap-4 cursor-pointer">
+                            <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-3xl font-bold shrink-0">➖</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg text-slate-800">${t('cat_subtraction')}</h3>
+                                <p class="text-xs text-slate-500">Operasi tolak visual mudah</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-rose-400 text-xl"></i>
+                        </div>
+
+                        <div onclick="switchTab('learn_shapes')" class="bouncy bg-white p-4 rounded-2xl border-2 border-purple-300 shadow-md flex items-center gap-4 cursor-pointer">
+                            <div class="w-16 h-16 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-3xl shrink-0">⭐</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg text-slate-800">${t('cat_shapes')}</h3>
+                                <p class="text-xs text-slate-500">Bulatan, Segi Tiga & objek harian</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-purple-400 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 5. CATEGORY 1: NUMBERS 1-20 ---
+        const numberWordsMs = ["", "SATU", "DUA", "TIGA", "EMPAT", "LIMA", "ENAM", "TUJUH", "LAPAN", "SEMBILAN", "SEPULUH", "SEBELAS", "DUA BELAS", "TIGA BELAS", "EMPAT BELAS", "LIMA BELAS", "ENAM BELAS", "TUJUH BELAS", "LAPAN BELAS", "SEMBILAN BELAS", "DUA PULUH"];
+        const numberWordsEn = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN", "TWENTY"];
+        const objectEmojis = ["🍎", "🚗", "⭐", "🎈", "🐱", "🐥", "🍌", "🎁"];
+
+        function renderLearnNumbersScreen() {
+            const num = state.activeNumber;
+            const word = state.lang === 'ms' ? numberWordsMs[num] : numberWordsEn[num];
+            const emoji = objectEmojis[(num - 1) % objectEmojis.length];
+
+            // Build grid of emoji objects
+            let objectsHtml = '';
+            for (let i = 0; i < num; i++) {
+                objectsHtml += `<span class="text-2xl hover:scale-125 transition-transform inline-block m-1 animate-bounce" style="animation-delay: ${i * 0.05}s">${emoji}</span>`;
+            }
+
+            return `
+                <div class="space-y-4">
+                    <!-- Top Bar Navigation -->
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('learn')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-blue-600 text-lg">${t('cat_numbers')}</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <!-- Number Card Main Display -->
+                    <div class="bg-white rounded-3xl p-6 border-4 border-sky-300 shadow-xl text-center space-y-4 relative overflow-hidden">
+                        <div class="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-tr from-blue-600 via-sky-500 to-indigo-600 drop-shadow-md">
+                            ${num}
+                        </div>
+                        <div class="text-2xl font-black tracking-widest text-amber-500 uppercase">
+                            ${word}
+                        </div>
+
+                        <!-- Object Display Grid -->
+                        <div class="bg-sky-50 rounded-2xl p-4 min-h-[100px] flex flex-wrap justify-center items-center border border-sky-100">
+                            ${objectsHtml}
+                        </div>
+
+                        <!-- Pronunciation Button -->
+                        <button onclick="speakText('${word}')" class="bouncy w-full bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-500 hover:to-yellow-500 text-amber-950 font-bold py-3 px-6 rounded-2xl shadow-md border-b-4 border-amber-600 flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-volume-high text-xl"></i>
+                            <span>${t('btn_listen')}</span>
+                        </button>
+                    </div>
+
+                    <!-- Number Selector Slider / Carousel Navigation -->
+                    <div class="flex items-center justify-between gap-3 pt-2">
+                        <button onclick="changeNumber(-1)" ${num <= 1 ? 'disabled class="opacity-40 bg-slate-200 p-3 rounded-2xl text-slate-400 font-bold flex-1"' : 'class="bouncy bg-blue-500 text-white p-3.5 rounded-2xl font-bold flex-1 shadow-md border-b-4 border-blue-700 flex items-center justify-center gap-1"'}>
+                            <i class="fa-solid fa-chevron-left"></i> ${t('btn_prev')}
+                        </button>
+                        <button onclick="changeNumber(1)" ${num >= 20 ? 'disabled class="opacity-40 bg-slate-200 p-3 rounded-2xl text-slate-400 font-bold flex-1"' : 'class="bouncy bg-blue-500 text-white p-3.5 rounded-2xl font-bold flex-1 shadow-md border-b-4 border-blue-700 flex items-center justify-center gap-1"'}>
+                            ${t('btn_next')} <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeNumber(delta) {
+            playSound('click');
+            state.activeNumber = Math.max(1, Math.min(20, state.activeNumber + delta));
+            // Track completion
+            if (state.activeNumber >= 10 && !state.profile.badges.includes('Number Explorer')) {
+                state.profile.badges.push('Number Explorer');
+            }
+            state.profile.completed.numbers = Math.max(state.profile.completed.numbers, Math.round((state.activeNumber / 20) * 100));
+            saveProfile();
+            renderCurrentPage();
+        }
+
+        // --- 6. CATEGORY 2: COUNTING EXERCISE ---
+        let countingAnswer = 3;
+        function renderLearnCountingScreen() {
+            countingAnswer = Math.floor(Math.random() * 5) + 1; // 1 to 5 items
+            const items = ["🍎", "🐱", "🚗", "🎈", "🐥"];
+            const selectedItem = items[Math.floor(Math.random() * items.length)];
+
+            let itemsHtml = '';
+            for (let i = 0; i < countingAnswer; i++) {
+                itemsHtml += `<span class="text-4xl m-2 inline-block bouncy">${selectedItem}</span>`;
+            }
+
+            // Generate choices
+            const options = [countingAnswer];
+            while (options.length < 4) {
+                const rand = Math.floor(Math.random() * 6) + 1;
+                if (!options.includes(rand)) options.push(rand);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('learn')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-amber-600 text-lg">${t('cat_counting')}</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-5 border-4 border-amber-300 shadow-xl text-center space-y-4">
+                        <h3 class="text-xl font-bold text-slate-800">
+                            ${state.lang === 'ms' ? 'Berapa banyak objek ini?' : 'How many objects are there?'}
+                        </h3>
+
+                        <!-- Items Display -->
+                        <div class="bg-amber-50 rounded-2xl p-6 min-h-[120px] flex flex-wrap items-center justify-center border border-amber-200">
+                            ${itemsHtml}
+                        </div>
+
+                        <!-- Answer Buttons Grid -->
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            ${options.map(opt => `
+                                <button onclick="checkCountingAnswer(${opt})" class="bouncy bg-gradient-to-r from-sky-400 to-blue-500 text-white font-black text-3xl py-4 rounded-2xl shadow-md border-b-4 border-blue-700">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkCountingAnswer(val) {
+            if (val === countingAnswer) {
+                playSound('correct');
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                state.profile.stars += 1;
+                state.profile.completed.counting = Math.min(100, (state.profile.completed.counting || 0) + 10);
+                saveProfile();
+                showFeedbackModal(true, t('correct_msg'), () => switchTab('learn_counting'));
+            } else {
+                playSound('wrong');
+                showFeedbackModal(false, t('wrong_msg'), null);
+            }
+        }
+
+        // --- 7. CATEGORY 3: VISUAL ADDITION ---
+        let addNum1 = 2, addNum2 = 1;
+        function renderLearnAdditionScreen() {
+            addNum1 = Math.floor(Math.random() * 3) + 1; // 1 to 3
+            addNum2 = Math.floor(Math.random() * 3) + 1; // 1 to 3
+            const correctSum = addNum1 + addNum2;
+
+            const emoji = "🍎";
+            let set1Html = Array(addNum1).fill(`<span class="text-3xl">${emoji}</span>`).join(' ');
+            let set2Html = Array(addNum2).fill(`<span class="text-3xl">${emoji}</span>`).join(' ');
+
+            const options = [correctSum];
+            while (options.length < 4) {
+                const rand = Math.floor(Math.random() * 7) + 1;
+                if (!options.includes(rand)) options.push(rand);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('learn')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-emerald-600 text-lg">${t('cat_addition')}</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-5 border-4 border-emerald-300 shadow-xl text-center space-y-4">
+                        <h3 class="text-lg font-bold text-slate-800">
+                            ${state.lang === 'ms' ? 'Jom tambah objek bersama!' : 'Let\'s add the objects!'}
+                        </h3>
+
+                        <!-- Equation Visual Cards -->
+                        <div class="flex items-center justify-center gap-2 bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 flex gap-1">
+                                ${set1Html}
+                            </div>
+                            <span class="text-3xl font-extrabold text-emerald-600">+</span>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 flex gap-1">
+                                ${set2Html}
+                            </div>
+                            <span class="text-3xl font-extrabold text-slate-600">=</span>
+                            <span class="text-3xl font-extrabold text-amber-500">?</span>
+                        </div>
+
+                        <div class="text-xl font-black text-slate-700">
+                            ${addNum1} + ${addNum2} = ?
+                        </div>
+
+                        <!-- Answer Buttons -->
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            ${options.map(opt => `
+                                <button onclick="checkAdditionAnswer(${opt}, ${correctSum})" class="bouncy bg-gradient-to-r from-emerald-400 to-green-500 text-white font-black text-3xl py-4 rounded-2xl shadow-md border-b-4 border-green-700">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAdditionAnswer(selected, correct) {
+            if (selected === correct) {
+                playSound('correct');
+                confetti({ particleCount: 50, spread: 60 });
+                state.profile.stars += 2;
+                state.profile.completed.addition = Math.min(100, (state.profile.completed.addition || 0) + 15);
+                saveProfile();
+                showFeedbackModal(true, t('correct_msg'), () => switchTab('learn_addition'));
+            } else {
+                playSound('wrong');
+                showFeedbackModal(false, t('wrong_msg'), null);
+            }
+        }
+
+        // --- 8. CATEGORY 4: VISUAL SUBTRACTION ---
+        let subNum1 = 4, subNum2 = 1;
+        function renderLearnSubtractionScreen() {
+            subNum1 = Math.floor(Math.random() * 3) + 3; // 3 to 5
+            subNum2 = Math.floor(Math.random() * 2) + 1; // 1 to 2
+            const correctRem = subNum1 - subNum2;
+
+            const emoji = "🎈";
+            let itemsHtml = '';
+            for (let i = 0; i < subNum1; i++) {
+                if (i >= subNum1 - subNum2) {
+                    itemsHtml += `<span class="text-3xl m-1 inline-block opacity-30 line-through">${emoji}</span>`;
+                } else {
+                    itemsHtml += `<span class="text-3xl m-1 inline-block">${emoji}</span>`;
+                }
+            }
+
+            const options = [correctRem];
+            while (options.length < 4) {
+                const rand = Math.floor(Math.random() * 5);
+                if (!options.includes(rand)) options.push(rand);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('learn')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-rose-600 text-lg">${t('cat_subtraction')}</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-5 border-4 border-rose-300 shadow-xl text-center space-y-4">
+                        <h3 class="text-lg font-bold text-slate-800">
+                            ${state.lang === 'ms' ? `Ada ${subNum1} belon, dibuang ${subNum2}. Berapa tinggal?` : `There are ${subNum1} balloons, take away ${subNum2}. How many left?`}
+                        </h3>
+
+                        <!-- Visual Object Display -->
+                        <div class="bg-rose-50 rounded-2xl p-4 min-h-[90px] flex items-center justify-center border border-rose-200">
+                            ${itemsHtml}
+                        </div>
+
+                        <div class="text-xl font-black text-slate-700">
+                            ${subNum1} - ${subNum2} = ?
+                        </div>
+
+                        <!-- Options -->
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            ${options.map(opt => `
+                                <button onclick="checkSubtractionAnswer(${opt}, ${correctRem})" class="bouncy bg-gradient-to-r from-rose-400 to-pink-500 text-white font-black text-3xl py-4 rounded-2xl shadow-md border-b-4 border-rose-700">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkSubtractionAnswer(selected, correct) {
+            if (selected === correct) {
+                playSound('correct');
+                confetti({ particleCount: 50, spread: 60 });
+                state.profile.stars += 2;
+                state.profile.completed.subtraction = Math.min(100, (state.profile.completed.subtraction || 0) + 15);
+                saveProfile();
+                showFeedbackModal(true, t('correct_msg'), () => switchTab('learn_subtraction'));
+            } else {
+                playSound('wrong');
+                showFeedbackModal(false, t('wrong_msg'), null);
+            }
+        }
+
+        // --- 9. CATEGORY 5: SHAPES MODULE ---
+        const shapesData = [
+            { id: 'circle', nameMs: 'Bulatan', nameEn: 'Circle', icon: '🟡', exampleMs: 'Bola, Jam', exampleEn: 'Ball, Clock' },
+            { id: 'square', nameMs: 'Segi Empat Sama', nameEn: 'Square', icon: '🟧', exampleMs: 'Biskut, Dadus', exampleEn: 'Biscuit, Dice' },
+            { id: 'triangle', nameMs: 'Segi Tiga', nameEn: 'Triangle', icon: '🔺', exampleMs: 'Kuih Seri Muka, Pizza', exampleEn: 'Cake, Pizza' },
+            { id: 'rectangle', nameMs: 'Segi Empat Tepat', nameEn: 'Rectangle', icon: '🟦', exampleMs: 'Pintu, Pembaris', exampleEn: 'Door, Ruler' },
+            { id: 'star', nameMs: 'Bintang', nameEn: 'Star', icon: '⭐', exampleMs: 'Bintang Laut', exampleEn: 'Starfish' }
+        ];
+        let shapeIndex = 0;
+
+        function renderLearnShapesScreen() {
+            const shp = shapesData[shapeIndex];
+            const title = state.lang === 'ms' ? shp.nameMs : shp.nameEn;
+            const example = state.lang === 'ms' ? shp.exampleMs : shp.exampleEn;
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('learn')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-purple-600 text-lg">${t('cat_shapes')}</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-6 border-4 border-purple-300 shadow-xl text-center space-y-4">
+                        <div class="text-8xl bouncy my-2">${shp.icon}</div>
+                        <h3 class="text-3xl font-black text-purple-700">${title}</h3>
+                        
+                        <div class="bg-purple-50 p-3 rounded-2xl border border-purple-200 text-sm font-bold text-purple-900">
+                            <span>Contoh Objek:</span> ${example}
+                        </div>
+
+                        <button onclick="speakText('${title}')" class="bouncy w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-2xl shadow-md border-b-4 border-purple-700 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-volume-high text-xl"></i>
+                            <span>${t('btn_listen')}</span>
+                        </button>
+                    </div>
+
+                    <!-- Shape Nav Buttons -->
+                    <div class="flex items-center justify-between gap-3 pt-2">
+                        <button onclick="changeShape(-1)" class="bouncy bg-purple-600 text-white p-3.5 rounded-2xl font-bold flex-1 shadow-md border-b-4 border-purple-800 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-chevron-left"></i> ${t('btn_prev')}
+                        </button>
+                        <button onclick="changeShape(1)" class="bouncy bg-purple-600 text-white p-3.5 rounded-2xl font-bold flex-1 shadow-md border-b-4 border-purple-800 flex items-center justify-center gap-1">
+                            ${t('btn_next')} <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeShape(delta) {
+            playSound('click');
+            shapeIndex = (shapeIndex + delta + shapesData.length) % shapesData.length;
+            state.profile.completed.shapes = Math.min(100, (state.profile.completed.shapes || 0) + 20);
+            saveProfile();
+            renderCurrentPage();
+        }
+
+        // --- 10. GAMES MENU SCREEN ---
+        function renderGamesMenuScreen() {
+            return `
+                <div class="space-y-4">
+                    <div class="text-center mb-2">
+                        <h2 class="text-2xl font-extrabold text-orange-600">${t('cat_games')}</h2>
+                        <p class="text-xs text-slate-500 font-semibold">Bermain sambil belajar matematik!</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div onclick="switchTab('game_catch')" class="bouncy bg-white p-4 rounded-3xl border-2 border-orange-300 shadow-md flex items-center gap-4 cursor-pointer">
+                            <div class="w-16 h-16 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-3xl shrink-0">🎯</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg text-slate-800">Cari Nombor (Catch Number)</h3>
+                                <p class="text-xs text-slate-500">Tekan nombor sasaran yang dipaparkan!</p>
+                            </div>
+                            <i class="fa-solid fa-play text-orange-500 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 11. GAME 1: CATCH THE NUMBER ---
+        let catchTarget = 5;
+        let catchScore = 0;
+        function renderGameCatchScreen() {
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('games')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-orange-600 text-lg">Cari Nombor!</span>
+                        <div class="text-xs font-bold bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-full text-amber-800">
+                            Skor: <span id="catch-score">0</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-4 border-4 border-orange-300 shadow-xl text-center">
+                        <div class="text-lg font-bold text-slate-800 mb-3">
+                            ${state.lang === 'ms' ? 'Cari dan tekan nombor:' : 'Find and tap number:'}
+                            <span id="catch-target-display" class="text-4xl font-black text-orange-600 ml-2 animate-bounce inline-block">5</span>
+                        </div>
+
+                        <!-- Interactive Number Grid -->
+                        <div id="catch-grid" class="grid grid-cols-3 gap-3 p-2 bg-orange-50 rounded-2xl border border-orange-200 min-h-[220px]">
+                            <!-- Generated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initCatchGame() {
+            catchScore = 0;
+            generateCatchRound();
+        }
+
+        function generateCatchRound() {
+            catchTarget = Math.floor(Math.random() * 10) + 1; // 1 to 10
+            const targetDisp = document.getElementById('catch-target-display');
+            if (targetDisp) targetDisp.innerText = catchTarget;
+
+            // Generate 6 numbers, 1 guaranteed target
+            const nums = [catchTarget];
+            while (nums.length < 6) {
+                const rand = Math.floor(Math.random() * 10) + 1;
+                nums.push(rand);
+            }
+            nums.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('catch-grid');
+            if (!grid) return;
+            grid.innerHTML = nums.map(n => `
+                <button onclick="handleCatchTap(${n})" class="bouncy bg-white text-3xl font-black text-blue-600 h-20 rounded-2xl shadow-md border-b-4 border-blue-200 flex items-center justify-center hover:bg-yellow-100">
+                    ${n}
+                </button>
+            `).join('');
+        }
+
+        function handleCatchTap(num) {
+            if (num === catchTarget) {
+                playSound('correct');
+                catchScore += 1;
+                state.profile.stars += 1;
+                const scoreElem = document.getElementById('catch-score');
+                if (scoreElem) scoreElem.innerText = catchScore;
+                saveProfile();
+                confetti({ particleCount: 30, spread: 40 });
+                generateCatchRound();
+            } else {
+                playSound('wrong');
+            }
+        }
+
+        // --- 12. QUIZ SYSTEM ---
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        const quizQuestions = [
+            { type: 'count', prompt: 'Berapa biji epal ini?', emoji: '🍎🍎🍎', answer: 3, options: [2, 3, 4, 5] },
+            { type: 'addition', prompt: 'Berapakah 2 + 2?', emoji: '⭐', answer: 4, options: [3, 4, 5, 6] },
+            { type: 'subtraction', prompt: 'Berapakah 5 - 1?', emoji: '🎈', answer: 4, options: [2, 3, 4, 5] },
+            { type: 'shape', prompt: 'Apakah nama bentuk 🔺 ini?', emoji: '🔺', answer: 'Segi Tiga', options: ['Bulatan', 'Segi Tiga', 'Bintang', 'Segi Empat'] },
+            { type: 'number', prompt: 'Nombor apakah selepas 4?', emoji: '🔢', answer: 5, options: [3, 5, 6, 7] }
+        ];
+
+        function renderQuizScreen() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            return renderQuizQuestionScreen();
+        }
+
+        function renderQuizQuestionScreen() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                return renderQuizResultsScreen();
+            }
+
+            const q = quizQuestions[currentQuizIndex];
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('home')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-amber-600 text-lg">${t('cat_quiz')}</span>
+                        <span class="text-xs font-bold text-slate-500 bg-white px-2.5 py-1 rounded-full border">
+                            ${currentQuizIndex + 1} / ${quizQuestions.length}
+                        </span>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-5 border-4 border-amber-300 shadow-xl text-center space-y-4">
+                        <h3 class="text-lg font-bold text-slate-800">${q.prompt}</h3>
+                        
+                        <div class="bg-amber-50 rounded-2xl p-6 text-5xl border border-amber-200">
+                            ${q.emoji}
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            ${q.options.map(opt => `
+                                <button onclick="answerQuiz('${opt}')" class="bouncy bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 font-extrabold text-2xl py-4 rounded-2xl shadow-md border-b-4 border-amber-600">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function answerQuiz(selected) {
+            const q = quizQuestions[currentQuizIndex];
+            if (String(selected) === String(q.answer)) {
+                playSound('correct');
+                quizScore += 1;
+            } else {
+                playSound('wrong');
+            }
+            currentQuizIndex += 1;
+            renderCurrentPage();
+        }
+
+        function renderQuizResultsScreen() {
+            const starsEarned = quizScore;
+            state.profile.stars += starsEarned;
+            state.profile.completed.quiz = Math.min(100, (state.profile.completed.quiz || 0) + 20);
+            if (quizScore >= 4 && !state.profile.badges.includes('Math Hero')) {
+                state.profile.badges.push('Math Hero');
+            }
+            saveProfile();
+
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+            return `
+                <div class="bg-white rounded-3xl p-6 border-4 border-amber-400 shadow-2xl text-center space-y-5 my-auto">
+                    <div class="text-6xl float-anim">🎊</div>
+                    <h2 class="text-3xl font-black text-amber-600">Syabas!</h2>
+                    <p class="text-slate-600 font-bold">${t('score_label')}: ${quizScore} / ${quizQuestions.length}</p>
+
+                    <div class="flex justify-center text-4xl gap-2 text-amber-400">
+                        ${Array(5).fill(0).map((_, i) => `<i class="fa-solid fa-star ${i < quizScore ? 'text-amber-400' : 'text-slate-200'}"></i>`).join('')}
+                    </div>
+
+                    <p class="text-xs font-semibold text-slate-500">
+                        Adik dapat +${starsEarned} bintang bonus! ⭐
+                    </p>
+
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="switchTab('quiz')" class="bouncy flex-1 bg-amber-400 text-amber-950 font-bold p-3.5 rounded-2xl border-b-4 border-amber-600">
+                            ${t('btn_play_again')}
+                        </button>
+                        <button onclick="switchTab('home')" class="bouncy flex-1 bg-blue-500 text-white font-bold p-3.5 rounded-2xl border-b-4 border-blue-700">
+                            ${t('btn_back')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 13. REWARDS & BADGES SCREEN ---
+        function renderRewardsScreen() {
+            const allBadges = [
+                { id: 'Number Explorer', icon: '🔢', desc: 'Belajar nombor 1–10' },
+                { id: 'Counting Star', icon: '🍎', desc: 'Jawab 10 soalan kiraan' },
+                { id: 'Math Hero', icon: '🏆', desc: 'Selesaikan kuiz dengan cemerlang' },
+                { id: 'Shape Master', icon: '🔺', desc: 'Kuasai semua bentuk asas' }
+            ];
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('home')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-purple-600 text-lg">${t('cat_rewards')}</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-5 text-white text-center shadow-lg">
+                        <div class="text-4xl mb-1">⭐ ${state.profile.stars}</div>
+                        <h3 class="font-black text-xl">Bintang Dikumpul</h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-700 text-sm">Lencana Pencapaian:</h4>
+                        ${allBadges.map(b => {
+                            const isEarned = state.profile.badges.includes(b.id);
+                            return `
+                                <div class="bg-white p-4 rounded-2xl border-2 ${isEarned ? 'border-amber-300' : 'border-slate-200 opacity-60'} flex items-center gap-3 shadow-sm">
+                                    <div class="text-4xl">${b.icon}</div>
+                                    <div class="flex-1">
+                                        <div class="font-bold text-slate-800 text-sm">${b.id}</div>
+                                        <div class="text-xs text-slate-500">${b.desc}</div>
+                                    </div>
+                                    ${isEarned ? '<span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full">Diberi!</span>' : '<span class="text-xs text-slate-400">Terkunci</span>'}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 14. PROGRESS TRACKING PAGE ---
+        function renderProgressScreen() {
+            const comp = state.profile.completed || {};
+            return `
+                <div class="space-y-4">
+                    <div class="text-center mb-2">
+                        <h2 class="text-2xl font-extrabold text-blue-600">${t('nav_progress')}</h2>
+                        <p class="text-xs text-slate-500 font-semibold">Kemajuan pembelajaran ${state.profile.name}</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-3xl border-2 border-sky-200 shadow-md space-y-4">
+                        ${renderProgressBar('Nombor (1-20)', comp.numbers || 20, 'bg-blue-500')}
+                        ${renderProgressBar('Kira-kira', comp.counting || 40, 'bg-amber-500')}
+                        ${renderProgressBar('Tambah', comp.addition || 30, 'bg-emerald-500')}
+                        ${renderProgressBar('Tolak', comp.subtraction || 20, 'bg-rose-500')}
+                        ${renderProgressBar('Bentuk', comp.shapes || 50, 'bg-purple-500')}
+                        ${renderProgressBar('Kuiz', comp.quiz || 60, 'bg-yellow-500')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressBar(label, val, colorClass) {
+            return `
+                <div>
+                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                        <span>${label}</span>
+                        <span>${val}%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3.5 border border-slate-200 overflow-hidden">
+                        <div class="${colorClass} h-full rounded-full transition-all duration-500" style="width: ${val}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 15. MODALS ENGINE (PROFILE / PARENT / FEEDBACK) ---
+        function showFeedbackModal(isCorrect, message, onNext) {
+            const modal = document.getElementById('modal-container');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl p-6 border-4 ${isCorrect ? 'border-emerald-400' : 'border-amber-400'} shadow-2xl text-center max-w-xs w-full space-y-4 animate-bounce" style="animation-iteration-count: 1;">
+                        <div class="text-6xl">${isCorrect ? '🎉' : '😊'}</div>
+                        <h3 class="text-2xl font-black ${isCorrect ? 'text-emerald-600' : 'text-amber-600'}">${message}</h3>
+                        <button id="modal-next-btn" class="bouncy w-full ${isCorrect ? 'bg-emerald-500 border-emerald-700' : 'bg-amber-500 border-amber-700'} text-white font-bold py-3 rounded-2xl shadow-md border-b-4">
+                            Teruskan ➔
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('modal-next-btn').onclick = () => {
+                playSound('click');
+                modal.innerHTML = '';
+                if (onNext) onNext();
+            };
+        }
+
+        function openProfileModal() {
+            playSound('click');
+            const modal = document.getElementById('modal-container');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl p-5 border-4 border-purple-300 shadow-2xl max-w-xs w-full space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-extrabold text-lg text-slate-800">Profil Murid</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Nama Adik:</label>
+                            <input type="text" id="input-profile-name" value="${state.profile.name}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:border-purple-500">
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Pilih Avatar:</label>
+                            <div class="flex justify-around text-2xl bg-purple-50 p-2 rounded-xl border border-purple-200">
+                                ${['👦', '👧', '🐱', '🐰', '🐻', '🐼'].map(a => `
+                                    <button onclick="selectAvatar('${a}')" class="bouncy hover:scale-125">${a}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <button onclick="saveProfileChanges()" class="bouncy w-full bg-purple-600 text-white font-bold py-3 rounded-xl border-b-4 border-purple-800 shadow-md">
+                            ${t('btn_save')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectAvatar(avatar) {
+            state.profile.avatar = avatar;
+            openProfileModal();
+        }
+
+        function saveProfileChanges() {
+            const input = document.getElementById('input-profile-name');
+            if (input && input.value.trim()) {
+                state.profile.name = input.value.trim();
+            }
+            saveProfile();
+            closeModal();
+            renderCurrentPage();
+        }
+
+        function openParentModal() {
+            playSound('click');
+            const modal = document.getElementById('modal-container');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl p-5 border-4 border-blue-400 shadow-2xl max-w-xs w-full space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-extrabold text-lg text-slate-800">Mod Ibu Bapa & Guru</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+
+                        <p class="text-xs text-slate-500 font-medium">Masukkan PIN untuk ke Kawalan Ibu Bapa (PIN Laluan: 1234):</p>
+                        
+                        <input type="password" id="parent-pin" maxlength="4" placeholder="****" class="w-full text-center text-2xl tracking-widest bg-slate-50 border-2 border-blue-200 rounded-xl p-2 font-bold focus:outline-none">
+
+                        <button onclick="verifyParentPIN()" class="bouncy w-full bg-blue-600 text-white font-bold py-3 rounded-xl border-b-4 border-blue-800 shadow-md">
+                            Masuk Mod Ibu Bapa
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function verifyParentPIN() {
+            const pin = document.getElementById('parent-pin').value;
+            if (pin === '1234' || pin === '0000') {
+                closeModal();
+                showParentDashboard();
+            } else {
+                playSound('wrong');
+                alert("PIN Salah! Sila guna 1234");
+            }
+        }
+
+        function showParentDashboard() {
+            const container = document.getElementById('main-content');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button onclick="switchTab('home')" class="bouncy text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i> ${t('btn_back')}
+                        </button>
+                        <span class="font-extrabold text-blue-700 text-lg">Dashboard Ibu Bapa</span>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm">💡 Cadangan Aktiviti Pembelajaran:</h4>
+                        <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl text-xs text-amber-900 font-semibold leading-relaxed">
+                            "${state.profile.name} menunjukkan prestasi sangat baik dalam tajuk <strong>Kenal Bentuk</strong>! Syorkan lebih banyak latihan dalam tajuk <strong>Tambah & Tolak</strong>."
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm">⚙️ Tetapan Aplikasi:</h4>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-600">Kesan Bunyi (SFX)</span>
+                            <input type="checkbox" ${state.soundEnabled ? 'checked' : ''} onchange="state.soundEnabled = this.checked;" class="w-5 h-5 accent-blue-600">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-600">Bahasa Aplikasi</span>
+                            <button onclick="toggleLanguage()" class="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1 rounded-full">${state.lang.toUpperCase()}</button>
+                        </div>
+                    </div>
+
+                    <button onclick="resetAppProgress()" class="bouncy w-full bg-rose-100 border border-rose-300 text-rose-700 font-bold p-3 rounded-2xl text-xs">
+                        Reset Semua Kemajuan Pembelajaran
+                    </button>
+                </div>
+            `;
+        }
+
+        function resetAppProgress() {
+            if (confirm("Adakah anda pasti mahu mereset kemajuan pembelajaran anak anda?")) {
+                localStorage.removeItem('math_easy_profile');
+                location.reload();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').innerHTML = '';
+        }
+
+        // INITIALIZE APP ON LOAD
+        window.addEventListener('load', () => {
+            // Apply language from storage
+            document.getElementById('current-lang-code').innerText = state.lang.toUpperCase();
+            document.getElementById('header-stars').innerText = state.profile.stars;
+            document.getElementById('header-avatar').innerText = state.profile.avatar;
+
+            // Start on splash screen
+            switchTab('splash');
+        });
+    </script>
+</body>
+</html>
